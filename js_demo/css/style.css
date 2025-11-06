@@ -1,0 +1,148 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: #4779f7;
+  text-align: center;
+}
+
+
+h1 {
+  color: rgb(0, 255, 255);
+  text-shadow: -3px -3px 3px #ff0000;
+  font-family: 'Dosis', sans-serif;
+  text-transform: uppercase;
+  font-size: 250%;  
+  letter-spacing: 1px;
+  width: 100%;
+  text-align: center;
+}
+h2{
+  color: rgb(255, 0, 0);
+  text-shadow: -3px -3px 3px #00eaff;
+  font-family: 'Dosis', sans-serif;
+  text-transform: uppercase;
+  font-size: 200%;  
+  letter-spacing: 1px;
+  width: 100%;
+  text-align: center;
+}
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20vh;
+  background: url(https://i.imgur.com/DLD3N2t.png);
+  background-size: 100vw 20vh;
+}
+.wave1 {
+  animation: animate 20s linear infinite;
+  z-index: 15;
+  opacity: 0.9;
+  animation-delay: 0s;
+  bottom: 0;
+}
+.wave2 {
+  animation: animate2 15s linear infinite;
+  z-index: 10;
+  opacity: 0.7;
+  animation-delay: -5s;
+  bottom: 10px;
+}
+.wave3 {
+  animation: animate 10s linear infinite;
+  z-index: 5;
+  opacity: 0.4;
+  animation-delay: -2s;
+  bottom: 15px;
+}
+.wave4 {
+  animation: animate2 5s linear infinite;
+  z-index: 1;
+  opacity: 0.5;
+  animation-delay: -5s;
+  bottom: 20px;
+}
+@keyframes animate {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: 100vw;
+  }
+}
+@keyframes animate2 {
+  0% {
+    background-position-x: 0;
+  }
+  100% {
+    background-position-x: -100vw;
+  }
+}
+#chat-form{
+  text-align: center;
+  background-color: #4779f7;
+}
+.button-7 {
+  background-color: #0095ff;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  box-shadow: rgba(255, 255, 255, .4) 0 1px 0 0 inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system,system-ui,"Segoe UI","Liberation Sans",sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.15385;
+  margin: 0;
+  outline: none;
+  padding: 8px .8em;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  white-space: nowrap;
+}
+
+.button-7:hover,
+.button-7:focus {
+  background-color: #07c;
+}
+
+.button-7:focus {
+  box-shadow: 0 0 0 4px rgba(0, 149, 255, .15);
+}
+
+.button-7:active {
+  background-color: #0064bd;
+  box-shadow: none;
+}
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+input[type="text"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+input[type="submit"] {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #218838;
+}

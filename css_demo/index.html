@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1">
+		<title>CSS Demo</title>
+		
+		<link rel="stylesheet" href="css/style.css">
+
+		
+		<style>
+			
+			.internal-note {
+				font-style: italic;
+				background-color: aliceblue;
+				color: #555;
+				text-align: center;
+				padding: 6px 10px;
+				border-radius: 6px;
+			}
+
+			
+			h1::after {
+				content: '';
+				display: block;
+				height: 4px;
+				width: 60px;
+				background: linear-gradient(90deg,#2a5d84,#e67e22);
+				margin-top:8px;
+				border-radius: 2px;
+				transform-origin: left center;
+				animation: underline-pop 1.2s ease forwards;
+			}
+
+			@keyframes underline-pop {
+				0% { transform: scaleX(0); opacity: 0.2; }
+				60% { transform: scaleX(1.05); opacity: 1; }
+				100% { transform: scaleX(1); opacity: 1; }
+			}
+		</style>
+	</head>
+	<body>
+
+		
+		
+		<nav class="site-nav">
+			<ul class="nav-list">
+				<li><a href="#">Home</a></li>
+				<li><a href="#">Gallery</a></li>
+				<li><a href="#">About</a></li>
+			</ul>
+		</nav>
+
+		<div class="hero">
+			<div class="hero-inner">
+				<h1 style="color:#2a5d84; text-align:left; font-size:2rem;">Welcome to the CSS Demo</h1>
+				<p class="internal-note">This page shows inline, internal, and external CSS usage.</p>
+				<p class="marquee" aria-hidden="true"><span>✨ Animated CSS demo — no JavaScript — ✨</span></p>
+			</div>
+			<div class="floating-orb" aria-hidden="true"></div>
+		</div>
+
+		<div class="container">
+			<section class="cards">
+				<div class="card">
+					<h2>Card Title <span class="badge" style="font-size:0.9rem; color:white; background:#e67e22; padding:2px 6px; border-radius:4px;">Inline badge</span></h2>
+					<p>
+						Some paragraph text demonstrating text color and alignment.
+						<span class="highlight">This span is styled externally.</span>
+					</p>
+				</div>
+
+				<div class="card alt">
+					<h2>Sliding Card <span class="badge small">CSS Move</span></h2>
+					<p>This card slides slightly up and casts a shadow on hover. The badge pulses.</p>
+				</div>
+
+				<div class="card">
+					<h2>Rotating Badge <span class="badge spin">Cool</span></h2>
+					<p>Try hovering — elements transform and animate using only CSS.</p>
+				</div>
+			</section>
+
+			<div class="box">
+				<p class="center-text">Centered text using external CSS.</p>
+			</div>
+		</div>
+
+	</body>
+</html>
+

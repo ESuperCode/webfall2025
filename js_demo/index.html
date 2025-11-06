@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JS DEMO</title>
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>   
+    <h1>Chat with AI</h1>
+    <form id="chat-form">
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button type="submit" class="button-7">Send</button>
+    </form>    
+     <h2>Response</h2>
+     <h1 id="ai-response"></h1>
+     <h2>Code Stuff</h2>
+     <input type="text" id="name" placeholder="WHATS UR NAME🤔🤔🤔">
+     <button class="button-7" onclick="document.getElementById('greeting').textContent = 'Hello, ' + document.getElementById('name').value + '!';">GREET ME</button>
+     <h2 id="greeting"></h2>
+    <script type="text/javascript" src="js/script.js"></script>
+    <h2>Store a variable!</h2>
+    <input type="text" id="variable-name" placeholder="Enter variable name">
+    <input type="text" id="variable-input" placeholder="Enter a value to store">
+    <button class="button-7" id="store-variable-button">Store Variable</button>
+    <h2>Find a stored variable!</h2>
+    <input type="text" id="find-variable-name" placeholder="Enter variable name to find">
+    <button class="button-7" id="find-variable-button">Find Variable</button>
+    <br>
+    <br>
+    <input type="text" id="age" placeholder="Age: eg.67">
+    <button class="button-7" id="age-submit">Calculate Birth Year</button>
+    <p id="birthdate-output"></p>    
+    <script>
+        document.getElementById('store-variable-button').addEventListener('click', function() {
+            const varName = document.getElementById('variable-name').value;
+            const varValue = document.getElementById('variable-input').value;
+            window[varName] = varValue;
+            alert('Stored variable ' + varName + ' with value: ' + varValue);
+            localStorage.setItem(varName, varValue);
+        });
+        document.getElementById('find-variable-button').addEventListener('click', function() {
+            const varName = document.getElementById('find-variable-name').value;
+            const varValue = localStorage.getItem(varName);
+            if (varValue !== null) {
+                alert('Variable ' + varName + ' has value: ' + varValue);
+            } else {
+                alert('Variable ' + varName + ' not found.');
+            }
+        });
+        document.getElementById('age-submit').addEventListener('click', function() {
+    alert('Calculating birth year based on age input.');
+    const birthYear = getBirthdateFromAge(parseInt(document.getElementById('age').value));
+    document.getElementById('birthdate-output').textContent = 'You were born in ' + birthYear + '.';
+});
+    </script>
+    </body>
+</html>

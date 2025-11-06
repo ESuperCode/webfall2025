@@ -1,0 +1,484 @@
+/* Main external stylesheet - now with many CSS-only animations and effects */
+:root {
+    --accent: #2a5d84;
+    --muted: #666;
+    --container-width: 900px;
+    --accent-2: #e67e22;
+    --glass: rgba(255,255,255,0.55);
+}
+
+/* Base page styles */
+body {
+    font-family: Arial, sans-serif;
+    color: #333; /* text color */
+    font-size: 16px; /* font size */
+    margin: 0;
+    padding: 20px;
+    background: linear-gradient(180deg,#eef2fb 0%, #f9f9fb 40%);
+}
+
+/* NAV container: width, margin, border, padding */
+.site-nav {
+    width: var(--container-width);
+    margin: 0 auto 20px auto; /* centers nav and adds bottom margin */
+    border: 2px solid var(--accent);
+    padding: 10px 15px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+    position: relative;
+}
+
+.nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.nav-list a {
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: bold;
+    position: relative;
+    padding: 6px 4px;
+}
+
+.container {
+    width: var(--container-width);
+    margin: 0 auto;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 6px 30px rgba(32,32,45,0.06);
+}
+
+h1 {
+    font-size: 2rem; /* font size */
+    margin-top: 0;
+    color: var(--accent);
+}
+
+h2 {
+    font-size: 1.25rem;
+    color: #222;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.card {
+    border: 1px dashed #ccc;
+    padding: 12px; /* padding */
+    margin-bottom: 12px; /* margin */
+    background: #fcfcff;
+    transition: transform 300ms ease, box-shadow 300ms ease;
+    transform-origin: center bottom;
+}
+
+.card:hover {
+    transform: translateY(-8px) rotate(-0.5deg);
+    box-shadow: 0 18px 40px rgba(20,30,60,0.12);
+}
+
+.card.alt {
+    background: linear-gradient(180deg,#fffefe,#fffaf6);
+}
+
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    background: var(--accent-2);
+    color: white;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transform-origin: center;
+}
+.badge.small { padding: 3px 6px; }
+.badge.spin { animation: spin 6s linear infinite; }
+
+@keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+
+.highlight {
+    color: #c0392b; /* text color for emphasis */
+    font-weight: 600;
+    display: inline-block;
+    transition: transform 300ms ease;
+}
+.highlight:hover { transform: rotate(-6deg) translateY(-3px); }
+
+.box {
+    padding: 10px; /* padding */
+    border: 1px solid #e0e0e0; /* border */
+    margin-top: 12px; /* margin */
+}
+
+.center-text {
+    text-align: center; /* text alignment */
+    font-size: 1.1rem;
+    color: #444;
+}
+
+.internal-note {
+    color: var(--muted);
+}
+
+span { font-size: 0.95rem; }
+
+/* HERO and marquee */
+.hero {
+    width: 100%;
+    padding: 40px 0 60px 0;
+    background: linear-gradient(120deg, rgba(42,93,132,0.06) 0%, rgba(230,126,34,0.03) 60% );
+    position: relative;
+    overflow: visible;
+}
+.hero-inner { width: var(--container-width); margin: 0 auto; }
+
+.marquee { overflow: hidden; white-space: nowrap; margin-top: 6px; }
+.marquee span { display: inline-block; padding-left: 100%; animation: marquee 9s linear infinite; }
+@keyframes marquee { 0%{transform:translateX(0%);} 100%{transform:translateX(-100%);} }
+
+/* floating orb moving slowly across the hero — demonstrates moving element */
+.floating-orb {
+    position: absolute;
+    width: 120px; height: 120px;
+    right: -40px; top: -20px;
+    background: radial-gradient(circle at 30% 30%, rgba(42,93,132,0.18), rgba(230,126,34,0.08));
+    border-radius: 50%; filter: blur(12px);
+    transform: translateX(0) translateY(0);
+    animation: orb-move 8s ease-in-out infinite;
+}
+@keyframes orb-move {
+    0% { transform: translate(0,0) scale(1); }
+    25% { transform: translate(-40px,10px) scale(1.02); }
+    50% { transform: translate(-80px, -10px) scale(0.98); }
+    75% { transform: translate(-40px,15px) scale(1.01); }
+    100% { transform: translate(0,0) scale(1); }
+}
+
+/* a little pulsing badge animation for one card */
+.card.alt .badge { animation: pulse 3s ease-in-out infinite; }
+@keyframes pulse { 0%{ transform: scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);} }
+
+/* moving underline for nav links (cool hover effect) */
+.nav-list li { position: relative; }
+.nav-list li::after {
+    content: '';
+    position: absolute; left: 0; bottom: -6px;
+    height: 3px; width: 0;
+    background: linear-gradient(90deg,var(--accent),var(--accent-2));
+    transition: width 300ms ease; border-radius: 2px;
+}
+.nav-list li:hover::after { width: 100%; }
+
+/* little spin on highlight on hover */
+.highlight { transition: transform 300ms ease; }
+
+/* responsive tweaks */
+@media (max-width:940px) { :root { --container-width: 90%; } .site-nav, .container { width: var(--container-width); } }
+@media (max-width:760px) {
+    .nav-list { gap: 10px; }
+    .hero-inner, .container, .site-nav { width: 92%; }
+    .floating-orb { display:none; }
+    .cards { grid-template-columns: 1fr; }
+}
+/* Main external stylesheet - now with many CSS-only animations and effects */
+:root {
+	--accent: #2a5d84;
+	--muted: #666;
+	--container-width: 900px;
+	--accent-2: #e67e22;
+	--glass: rgba(255,255,255,0.55);
+}
+
+/* Base page styles */
+body {
+	font-family: Arial, sans-serif;
+	color: #333; /* text color */
+	font-size: 16px; /* font size */
+	margin: 0;
+	padding: 20px;
+	background: linear-gradient(180deg,#eef2fb 0%, #f9f9fb 40%);
+}
+
+/* NAV container: width, margin, border, padding */
+.site-nav {
+	width: var(--container-width);
+	margin: 0 auto 20px auto; /* centers nav and adds bottom margin */
+	border: 2px solid var(--accent);
+	padding: 10px 15px;
+	background: rgba(255,255,255,0.85);
+	border-radius: 6px;
+	backdrop-filter: blur(6px);
+	position: relative;
+}
+
+.nav-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 15px;
+}
+
+.nav-list a {
+	text-decoration: none;
+	color: var(--accent);
+	font-weight: bold;
+	position: relative;
+	padding: 6px 4px;
+}
+
+.container {
+	width: var(--container-width);
+	margin: 0 auto;
+	padding: 20px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	box-shadow: 0 6px 30px rgba(32,32,45,0.06);
+}
+
+h1 {
+	font-size: 2rem; /* font size */
+	margin-top: 0;
+	color: var(--accent);
+}
+
+h2 {
+	font-size: 1.25rem;
+	color: #222;
+}
+
+.cards {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 14px;
+	margin-bottom: 18px;
+}
+
+.card {
+	border: 1px dashed #ccc;
+	padding: 12px; 
+	margin-bottom: 12px; 
+	background: #fcfcff;
+	transition: transform 300ms ease, box-shadow 300ms ease;
+	transform-origin: center bottom;
+}
+
+.card:hover {
+	transform: translateY(-8px) rotate(-0.5deg);
+	box-shadow: 0 18px 40px rgba(20,30,60,0.12);
+}
+
+.card.alt {
+	background: linear-gradient(180deg,#fffefe,#fffaf6);
+}
+
+.badge {
+	display: inline-block;
+	padding: 4px 8px;
+	background: var(--accent-2);
+	color: white;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	transform-origin: center;
+}
+.badge.small { padding: 3px 6px; }
+.badge.spin { animation: spin 6s linear infinite; }
+
+@keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+
+.highlight {
+	color: #c0392b; /* text color for emphasis */
+	font-weight: 600;
+	display: inline-block;
+	transition: transform 300ms ease;
+}
+.highlight:hover { transform: rotate(-6deg) translateY(-3px); }
+
+.box {
+	padding: 10px; /* padding */
+	border: 1px solid #e0e0e0; /* border */
+	margin-top: 12px; /* margin */
+}
+
+.center-text {
+	text-align: center; /* text alignment */
+	font-size: 1.1rem;
+	color: #444;
+}
+
+.internal-note {
+	color: var(--muted);
+}
+
+span { font-size: 0.95rem; }
+
+/* HERO and marquee */
+.hero {
+	width: 100%;
+	padding: 40px 0 60px 0;
+	background: linear-gradient(120deg, rgba(42,93,132,0.06) 0%, rgba(230,126,34,0.03) 60% );
+	position: relative;
+	overflow: visible;
+}
+.hero-inner { width: var(--container-width); margin: 0 auto; }
+
+.marquee { overflow: hidden; white-space: nowrap; margin-top: 6px; }
+.marquee span { display: inline-block; padding-left: 100%; animation: marquee 9s linear infinite; }
+@keyframes marquee { 0%{transform:translateX(0%);} 100%{transform:translateX(-100%);} }
+
+/* floating orb moving slowly across the hero — demonstrates moving element */
+.floating-orb {
+	position: absolute;
+	width: 120px; height: 120px;
+	right: -40px; top: -20px;
+	background: radial-gradient(circle at 30% 30%, rgba(42,93,132,0.18), rgba(230,126,34,0.08));
+	border-radius: 50%; filter: blur(12px);
+	transform: translateX(0) translateY(0);
+	animation: orb-move 8s ease-in-out infinite;
+}
+@keyframes orb-move {
+	0% { transform: translate(0,0) scale(1); }
+	25% { transform: translate(-40px,10px) scale(1.02); }
+	50% { transform: translate(-80px, -10px) scale(0.98); }
+	75% { transform: translate(-40px,15px) scale(1.01); }
+	100% { transform: translate(0,0) scale(1); }
+}
+
+/* a little pulsing badge animation for one card */
+.card.alt .badge { animation: pulse 3s ease-in-out infinite; }
+@keyframes pulse { 0%{ transform: scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);} }
+
+/* moving underline for nav links (cool hover effect) */
+.nav-list li { position: relative; }
+.nav-list li::after {
+	content: '';
+	position: absolute; left: 0; bottom: -6px;
+	height: 3px; width: 0;
+	background: linear-gradient(90deg,var(--accent),var(--accent-2));
+	transition: width 300ms ease; border-radius: 2px;
+}
+.nav-list li:hover::after { width: 100%; }
+
+/* little spin on highlight on hover */
+.highlight { transition: transform 300ms ease; }
+
+/* responsive tweaks */
+@media (max-width:940px) { :root { --container-width: 90%; } .site-nav, .container { width: var(--container-width); } }
+@media (max-width:760px) {
+	.nav-list { gap: 10px; }
+	.hero-inner, .container, .site-nav { width: 92%; }
+	.floating-orb { display:none; }
+	.cards { grid-template-columns: 1fr; }
+}
+
+:root {
+	--accent: #2a5d84;
+	--muted: #666;
+	--container-width: 900px;
+}
+
+body {
+	font-family: Arial, sans-serif;
+	color: #333; /* text color */
+	font-size: 16px; /* font size */
+	margin: 0;
+	padding: 20px;
+	background: #f9f9fb;
+}
+
+
+.site-nav {
+	width: var(--container-width);
+	margin: 0 auto 20px auto; 
+	border: 2px solid var(--accent);
+	padding: 10px 15px;
+	background: #fff;
+	border-radius: 6px;
+}
+
+.nav-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	gap: 15px;
+}
+
+.nav-list a {
+	text-decoration: none;
+	color: var(--accent);
+	font-weight: bold;
+}
+
+.container {
+	width: var(--container-width);
+	margin: 0 auto;
+	padding: 20px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+}
+
+h1 {
+	font-size: 2rem; 
+	margin-top: 0;
+	color: var(--accent);
+}
+
+h2 {
+	font-size: 1.25rem;
+	color: #222;
+}
+
+.card {
+	border: 1px dashed #ccc;
+	padding: 12px; 
+	margin-bottom: 12px; 
+	background: #fcfcff;
+}
+
+.badge {
+	font-weight: 600;
+}
+
+.highlight {
+	color: #c0392b; 
+	font-weight: 600;
+}
+
+.box {
+	padding: 10px; 
+	border: 1px solid #e0e0e0; 
+	margin-top: 12px; 
+}
+
+.center-text {
+	text-align: center; 
+	font-size: 1.1rem;
+	color: #444;
+}
+
+
+.internal-note {
+	color: var(--muted);
+}
+
+span {
+	font-size: 0.95rem;
+}
+
+@media (max-width: 940px) {
+	:root { --container-width: 90%; }
+	.site-nav, .container { width: var(--container-width); }
+}
+

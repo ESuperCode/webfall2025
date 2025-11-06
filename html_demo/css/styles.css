@@ -1,0 +1,92 @@
+body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(-45deg, #0b0275, #52007b, #11005c, #27004e);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      height: 100vh;
+      min-height: 100vh;
+      color: #fff;
+      position: relative;
+      overflow-x: hidden;
+      text-align: center;
+    }
+    @keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+
+}
+    .iframe-container {
+      width: 500px;
+      height: 400px; 
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      position: relative; 
+    }
+.search-container {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            transition: width 0.3s;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 25px;
+        }
+        
+        /* Expand the container width on active state */
+        .search-container.active {
+            width: 300px;
+        }
+
+        /* Styles for the search input field */
+        .search-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 10px 15px;
+            font-size: 16px;
+            flex-grow: 1;
+            display: none; /* Hidden by default */
+        }
+
+        /* Show input field when container is active */
+        .search-container.active .search-input {
+            display: block;
+        }
+
+        /* Styling for the search icon */
+        .search-icon {
+            padding: 15px;
+            font-size: 20px;
+            color: #555;
+            transition: color 0.3s;
+        }
+
+        /* Results list styling */
+        #results-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+
+        #results-list li {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        /* Initial state: results are hidden */
+        .search-container:not(.active) ~ #results-list {
+            display: none;
+        }
+    
