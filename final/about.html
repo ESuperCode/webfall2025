@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Neural Networks — Deep Dive: Training & Execution</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    :root{--bg:#f8fafc;--card:#ffffff;--accent:#0ea5a4;--muted:#475569}
+    body{font-family:Inter,Segoe UI,Arial;margin:0;background:linear-gradient(180deg,#f8fafc, #eef2f7);color:#0f1724}
+    .wrap{max-width:1000px;margin:30px auto;padding:28px}
+    header{display:flex;align-items:center;gap:14px}
+    h1{margin:0}
+    .card{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+    .diagram{margin-top:14px}
+    .code{background:#0b1220;color:#e6eef8;padding:12px;border-radius:8px;font-family:monospace;font-size:13px}
+    .toggle{margin-top:10px}
+    .run-btn{background:linear-gradient(90deg,var(--accent),#7c3aed);color:white;padding:10px 14px;border-radius:10px;border:none;cursor:pointer}
+    svg#dnn{width:100%;height:260px}
+    .animPulse{animation:flow 2s linear infinite}
+    @keyframes flow{0%{stroke-dashoffset:1000}100%{stroke-dashoffset:0}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+   
+        <h1>Neural Networks</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="example.html">Example</a>
+        </nav>
+</header>
+
+    <div class="card" style="margin-top:18px">
+      <h2>Training</h2>
+      <p>
+        Training a neural network is an iterative process of adjusting internal numeric parameters (weights and biases) so the model maps inputs to the desired outputs. The process begins with a model architecture (layers, number of neurons, activation functions), and a dataset split into training and validation sets. During each training step (often called an iteration), the network performs a forward pass: inputs travel through layers, each neuron computes a weighted sum of its inputs plus a bias, then applies an activation function (ReLU, sigmoid, tanh, etc.) to introduce non-linearity. The network's current output is compared to the true label using a loss function (for example, mean squared error for regression or cross-entropy for classification), which quantifies the error.
+      </p>
+      <p>
+        Backpropagation computes gradients of the loss with respect to each parameter by applying the chain rule through the network; these gradients indicate how to change each weight to reduce loss. An optimizer (SGD, Adam, RMSProp) uses these gradients to update parameters, typically with a learning rate that scales step size. Training runs for many epochs (full passes over the training set), and uses techniques like mini-batch updates (dividing data into batches), regularization (dropout, weight decay), and learning rate schedules to improve convergence. Validation datasets and early stopping help prevent overfitting by monitoring performance on unseen data. Large-scale training often leverages GPU/TPU acceleration, data parallelism, mixed precision, and distributed strategies to handle expensive matrix multiplications. Hyperparameters — architecture choices, learning rate, batch size — must be tuned; automated tools (grid search, Bayesian optimization) help.
+      </p>
+      <p>
+        After training, the model is evaluated on a test set to estimate real-world performance. The trained parameters are then exported for inference: during inference, the network performs only the forward pass (no gradient computation), making it faster and more memory-efficient. Optimizations for inference include quantization (compressing numbers to lower precision), pruning (removing negligible weights), and compiling to specialized runtimes to meet latency and throughput requirements in production.
+      </p>
+
+      <div class="diagram">
+        <h3>Diagram — simplified computational graph</h3>
+        
+        <svg id="dnn" viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="gflow" x1="0" x2="1">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+         
+          <g fill="#fff" font-size="12" text-anchor="middle">
+            <circle cx="80" cy="100" r="16" fill="#111827" stroke="#9ca3af" stroke-width="1"/>
+            <text x="80" y="105">x</text>
+            <circle cx="300" cy="60" r="14" fill="#0ea5a4"/>
+            <circle cx="300" cy="140" r="14" fill="#0ea5a4"/>
+            <circle cx="520" cy="80" r="14" fill="#7c3aed"/>
+            <circle cx="520" cy="120" r="14" fill="#7c3aed"/>
+            <rect x="700" y="80" width="60" height="40" rx="6" fill="#06b6d4" />
+            <text x="730" y="105">ŷ</text>
+          </g>
+          <g stroke="url(#gflow)" stroke-width="3" stroke-linecap="round">
+            <line x1="96" y1="100" x2="286" y2="60" stroke-dasharray="8" class="animPulse"/>
+            <line x1="96" y1="100" x2="286" y2="140" stroke-dasharray="8" class="animPulse"/>
+            <line x1="314" y1="60" x2="506" y2="80" stroke-dasharray="8" class="animPulse"/>
+            <line x1="314" y1="140" x2="506" y2="120" stroke-dasharray="8" class="animPulse"/>
+            <line x1="534" y1="80" x2="700" y2="100" stroke-dasharray="8" class="animPulse"/>
+            <line x1="534" y1="120" x2="700" y2="100" stroke-dasharray="8" class="animPulse"/>
+          </g>
+        </svg>
+
+        <div style="margin-top:12px">
+           </div>
+      </div>
+
+      <h3 style="margin-top:18px">Inference vs Training (quick)</h3>
+      <ul>
+        <li><strong>Training:</strong> forward pass + loss + backprop + optimizer updates (compute & memory heavy).</li>
+        <li><strong>Inference:</strong> forward pass only, with optimizations for latency and low memory footprint.</li>
+      </ul>
+
+      <div style="margin-top:18px">
+        <h3>Small code sketch (pseudo-JS)</h3>
+        <pre class="code">// forward pass (single layer)
+function forward(x, W, b, activation){
+  const z = matmul(W, x).map((v,i)=>v + b[i]);
+  return activation(z);
+}
+
+
+function step(params, grads, lr){
+  params.W = params.W.map((w,i)=>w - lr*grads.W[i]);
+  params.b = params.b.map((bb,i)=>bb - lr*grads.b[i]);
+}
+        </pre>
+      </div>
+
+     
+
+    <footer style="text-align:center;margin-top:18px;color:#64748b">Back to <a href="index.html">Overview</a></footer>
+  </div>
+
+  <script>
+    document.getElementById('run-forward').addEventListener('click',()=>{
+      const nodes = document.querySelectorAll('#dnn circle, #dnn rect');
+      nodes.forEach((n,i)=>{ n.style.transition='transform 420ms ease, opacity 420ms'; setTimeout(()=>{ n.style.transform='scale(1.12)'; n.style.opacity='0.85'; }, i*120); setTimeout(()=>{ n.style.transform=''; n.style.opacity='1'; }, 1200 + i*120); });
+    });
+  </script>
+</body>
+</html>

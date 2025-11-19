@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>updateExamplesList</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style1.css" />
+</head>
+<body>
+	<div class="header-wrap">
+	<header>
+   
+        <h1>Neural Networks</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="example.html">Example</a>
+        </nav>
+</header>
+</div>
+<br>
+<br>
+
+  <div class="floating">
+    <div class="float-blob blob-a"></div>
+    <div class="float-blob blob-b"></div>
+  </div>
+
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div>
+          <h1>Example classification model</h1>
+          <p class="lead">Small, simple, (Not too decisive), straightforward model with TensorFlow.js</p>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button id="saveModel" class="btn">Save Model</button>
+        <button id="loadModel" class="btn">Load Model</button>
+      </div>
+    </header>
+
+  
+    <section class="panel classes">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>         
+          <strong style="font-size:16px">Label your examples</strong>
+        </div>
+        <button id="addClassBtn" class="btn">+ Add</button>
+      </div>
+
+      <div id="classesContainer" style="margin-top:8px;display:flex;flex-direction:column;gap:10px"></div>
+
+      <div style="margin-top:auto">
+        <div class="small">Model info</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+          <div style="font-weight:700">Vocabulary</div><div id="vocabSize">0</div>
+        </div>
+        <div class="progress" style="margin-top:8px"><i id="membar" style="width:0%"></i></div>
+      </div>
+    </section>
+
+   
+    <main class="panel studio">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          
+          <strong style="font-size:16px">Add text examples to labels</strong>
+        </div>
+        <div class="small">Tip: add 10+ examples per class for decent results😭</div>
+      </div>
+
+      <div class="recorder">
+        <textarea id="exampleText" placeholder="Type or paste training example text here... (e.g. 'I loved this movie' or 'This is spam')"></textarea>
+        <div class="controls">
+          <label class="small">Choose label</label>
+          <select id="labelSelect" style="padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04)"></select>
+          <button id="addExample" class="btn primary">Add Example</button>
+
+          <div style="margin-top:8px">
+            <div class="small">Training</div>
+            <div style="display:flex;gap:8px;margin-top:6px;align-items:center">
+              <input id="epochs" type="number" value="20" min="1" style="width:72px;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.04)" />
+              <button id="trainBtn" class="btn">Train</button>
+            </div>
+          </div>
+
+          <div style="margin-top:auto">
+            <div class="small">Quick actions</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button id="clearData" class="btn">Clear Data</button>
+              <button id="resetModel" class="btn warn">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;margin-top:8px">
+        <div style="flex:1" class="panel">
+          <div class="small">Examples</div>
+          <div id="examplesContainer" class="examples-list"></div>
+        </div>
+
+        <div style="width:210px" class="panel">
+          <div class="small">Training log</div>
+          <pre id="log" style="white-space:pre-wrap;word-break:break-word;font-size:13px;margin:8px 0;height:120px;overflow:auto;background:transparent;border-radius:8px"></pre>
+        </div>
+      </div>
+
+    </main>
+    <aside class="panel predict-card">
+      
+
+      <div class="live-input" contenteditable id="liveInput" spellcheck="false" placeholder="Type text here to see predictions...">I love this!</div>
+
+      <div>
+        <div class="small">Probabilities</div>
+        <div id="probs" class="probs"></div>
+      </div>
+
+      <div>
+        <div class="small">Model status</div>
+        <div id="status">No model trained yet</div>
+      </div>
+    </aside>   
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.9.0/dist/tf.min.js"></script>
+  <script>
+    
+    const state = {
+      classes: [], 
+      vocab: new Map(), 
+      minCount: 1,
+      model: null,
+      trained: false,
+    };
+
+   
+    const classesContainer = document.getElementById('classesContainer');
+    const addClassBtn = document.getElementById('addClassBtn');
+    const labelSelect = document.getElementById('labelSelect');
+    const addExampleBtn = document.getElementById('addExample');
+    const exampleText = document.getElementById('exampleText');
+    const examplesContainer = document.getElementById('examplesContainer');
+    const vocabSize = document.getElementById('vocabSize');
+    const membar = document.getElementById('membar');
+    const trainBtn = document.getElementById('trainBtn');
+    const epochsInput = document.getElementById('epochs');
+    const logEl = document.getElementById('log');
+    const probsEl = document.getElementById('probs');
+    const liveInput = document.getElementById('liveInput');
+    const statusEl = document.getElementById('status');
+    const saveModelBtn = document.getElementById('saveModel');
+    const loadModelBtn = document.getElementById('loadModel');
+    const clearDataBtn = document.getElementById('clearData');
+    const resetModelBtn = document.getElementById('resetModel');
+
+ 
+    function uid(n=6){return Math.random().toString(36).slice(2,2+n)}
+    function randomColor(){const h=Math.floor(Math.random()*360);return `linear-gradient(135deg,hsl(${h} 80% 60%), hsl(${(h+60)%360} 80% 55%))`} // for visuals
+
+    function renderClasses(){
+      classesContainer.innerHTML='';labelSelect.innerHTML='';
+      state.classes.forEach((c,idx)=>{
+        const div=document.createElement('div');div.className='class-btn';
+        div.innerHTML=`<div style='width:14px;height:14px;border-radius:4px;background:${c.color}'></div><div class='class-meta'><div style='font-weight:700'>${c.label}</div><div class='small'>${c.examples.length} examples</div></div><div style='display:flex;flex-direction:column;gap:6px'><button data-id='${c.id}' class='btn' style='padding:6px 8px'>Edit</button></div>`;
+        classesContainer.appendChild(div);
+        const opt=document.createElement('option');opt.value=c.id;opt.textContent=c.label;labelSelect.appendChild(opt);
+      })
+      updateExamplesList();
+    }
+
+    function updateExamplesList(){
+      examplesContainer.innerHTML='';
+      state.classes.forEach(c=>{
+        if(c.examples.length===0) return;
+        const group=document.createElement('div');
+        group.innerHTML=`<div style='font-weight:700;margin-bottom:6px'>${c.label}</div>`;
+        const list=document.createElement('div');list.style.display='flex';list.style.flexDirection='column';list.style.gap='8px';
+        c.examples.forEach((ex,i)=>{
+          const p=document.createElement('div');p.className='example-pill';p.textContent=ex; list.appendChild(p);
+        })
+        group.appendChild(list);examplesContainer.appendChild(group);
+      })
+    }
+
+    function addClass(label){
+      const c={id:uid(5),label:label||`Class ${state.classes.length+1}`,color:`hsl(${Math.floor(Math.random()*360)} 80% 60%)`,examples:[]};
+      state.classes.push(c);renderClasses();
+    }
+
+    addClassBtn.addEventListener('click',()=>{
+      const label = prompt('Label name:', `Class ${state.classes.length+1}`);
+      if(label) addClass(label.trim());
+    })
+
+   
+    addExampleBtn.addEventListener('click',()=>{
+      const text=exampleText.value.trim();
+      if(!text){alert('Enter example text');return}
+      const id=labelSelect.value; if(!id){alert('Create a label first');return}
+      const c = state.classes.find(x=>x.id===id);
+      c.examples.push(text);
+      exampleText.value=''; renderClasses(); buildVocab();
+    })
+
+    clearDataBtn.addEventListener('click',()=>{
+      if(!confirm('Clear all examples and vocabulary?')) return;
+      state.classes.forEach(c=>c.examples=[]); state.vocab.clear(); state.trained=false; state.model=null; renderClasses(); buildVocab(); statusEl.textContent='No model trained yet'; log('Cleared data');
+    })
+
+    resetModelBtn.addEventListener('click',async()=>{
+      if(state.model){state.model.dispose(); state.model=null;}
+      state.trained=false; statusEl.textContent='Model reset'; log('Model reset');
+    })
+
+    function log(...t){logEl.textContent += t.join(' ')+'\n'; logEl.scrollTop = logEl.scrollHeight}
+
+ 
+    function tokenize(text){
+      return text.toLowerCase().split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+    }
+
+    function buildVocab(){
+      const counts = new Map();
+      state.classes.forEach(c=>c.examples.forEach(ex=>{
+        const toks = tokenize(ex);
+        toks.forEach(tok=>counts.set(tok,(counts.get(tok)||0)+1));
+      }))
+    
+      state.vocab.clear();let i=0; for(const [w,cnt] of counts.entries()){ if(cnt>=state.minCount){ state.vocab.set(w,i++); }}
+      vocabSize.textContent = state.vocab.size;
+      const memPercent = Math.min(100, Math.floor(state.vocab.size/800*100)); membar.style.width = memPercent+'%';
+      log(`Vocab built — ${state.vocab.size} tokens`);
+    }
+
+    function vectorize(text){
+      const arr = new Float32Array(state.vocab.size||1);
+      const toks = tokenize(text);
+      toks.forEach(t=>{ const idx = state.vocab.get(t); if(idx!==undefined) arr[idx] += 1; });
+      
+      const s = arr.reduce((a,b)=>a+b,0)||1; for(let i=0;i<arr.length;i++){arr[i]=arr[i]/s}
+      return arr;
+    }
+
+  
+    function prepareDataset(){
+      const X=[]; const y=[]; const classCount = state.classes.length;
+      state.classes.forEach((c,ci)=>{
+        c.examples.forEach(ex=>{
+          X.push(vectorize(ex)); y.push(ci);
+        })
+      })
+      if(X.length===0) throw new Error('No training examples');
+      const xs = tf.tensor2d(X);
+      const ys = tf.oneHot(tf.tensor1d(y,'int32'), classCount);
+      return {xs,ys};
+    }
+
+
+    function buildModel(){
+      if(state.vocab.size===0) throw new Error('Vocabulary is empty — add examples');
+      const inputDim = state.vocab.size;
+      const classCount = state.classes.length;
+      const model = tf.sequential();
+      model.add(tf.layers.dense({inputShape:[inputDim],units:128,activation:'relu'}));
+      model.add(tf.layers.dropout({rate:0.25}));
+      model.add(tf.layers.dense({units:64,activation:'relu'}));
+      model.add(tf.layers.dropout({rate:0.2}));
+      model.add(tf.layers.dense({units:classCount,activation:'softmax'}));
+      model.compile({optimizer:tf.train.adam(0.001),loss:'categoricalCrossentropy',metrics:['accuracy']});
+      state.model = model; state.trained=false; log('Model created — inputDim='+inputDim+' classes='+classCount);
+    }
+
+    async function trainModel(epochs=20){
+      if(state.classes.length<2) { alert('Add at least 2 classes'); return }
+      try{
+        buildVocab();
+        const {xs,ys} = prepareDataset();
+        if(!state.model) buildModel();
+        statusEl.textContent = 'Training...';
+        const history = await state.model.fit(xs,ys,{epochs: epochs, batchSize: Math.min(32,xs.shape[0]), shuffle:true,
+          callbacks: {
+            onEpochEnd: async (epoch,logs)=>{
+              log(`Epoch ${epoch+1} — loss: ${logs.loss.toFixed(4)} acc: ${((logs.acc||logs.acc)||0).toFixed?((logs.acc||logs.acc).toFixed(3)):''}`);
+              updateProbBars([]);
+            }
+          }
+        });
+        xs.dispose(); ys.dispose(); state.trained=true; statusEl.textContent='Trained'; log('Training finished');
+      }catch(e){log('Train error: '+e.message); alert(e.message)}
+    }
+
+    function updateProbBars(pred){
+      probsEl.innerHTML='';
+      if(state.classes.length===0) return;
+      const probs = pred.length?pred: new Array(state.classes.length).fill(0);
+      const maxIdx = probs.indexOf(Math.max(...probs));
+      state.classes.forEach((c,i)=>{
+        const row = document.createElement('div');row.className='prob-row';
+        const label = document.createElement('div'); label.style.minWidth='80px'; label.textContent=c.label;
+        const barWrap = document.createElement('div'); barWrap.className='prob-bar';
+        const fill = document.createElement('div'); fill.className='prob-fill'; fill.style.width=(probs[i]*100||0)+'%';
+        barWrap.appendChild(fill);
+        const pct = document.createElement('div'); pct.style.minWidth='40px'; pct.style.textAlign='right'; pct.textContent = (probs[i]*100||0).toFixed(1)+'%';
+        row.appendChild(label); row.appendChild(barWrap); row.appendChild(pct);
+        if(i===maxIdx && probs[i]>0.5) { // small animation highlight
+          row.style.transform='scale(1.02)'; row.style.transition='transform .22s';
+        }
+        probsEl.appendChild(row);
+      })
+    }
+
+    async function predict(text){
+      if(!state.model || !state.trained) return []; 
+      const vec = vectorize(text);
+      const t = tf.tensor2d([vec]);
+      const out = state.model.predict(t);
+      const arr = await out.data(); out.dispose(); t.dispose();
+      return Array.from(arr);
+    }
+
+
+    let predictTimer = null;
+    liveInput.addEventListener('input',()=>{
+      const text = liveInput.innerText.trim(); if(predictTimer) clearTimeout(predictTimer);
+      predictTimer = setTimeout(async ()=>{
+        if(text.length===0){ updateProbBars([]); return }
+        const probs = await predict(text); if(!probs.length){ statusEl.textContent = 'No trained model — train first'; return }
+        updateProbBars(probs);
+      }, 250);
+    })
+
+    trainBtn.addEventListener('click',async()=>{
+      const epochs = Number(epochsInput.value)||20; trainBtn.disabled=true; await trainModel(epochs); trainBtn.disabled=false;
+    })
+
+  
+    saveModelBtn.addEventListener('click',async()=>{
+      if(!state.model || !state.trained) { alert('No trained model to save'); return }
+      try{
+        await state.model.save('indexeddb://teachable-text-model');
+    
+        const meta = {vocab:Array.from(state.vocab.entries()), classes: state.classes.map(c=>({id:c.id,label:c.label}))};
+        localStorage.setItem('tt_model_meta', JSON.stringify(meta));
+        alert('Model saved to IndexedDB');
+      }catch(e){alert('Save failed: '+e.message)}
+    })
+
+    loadModelBtn.addEventListener('click',async()=>{
+      try{
+        const found = await tf.io.listModels();
+        if(!found['indexeddb://teachable-text-model']){ alert('No saved model found in IndexedDB'); return }
+        state.model = await tf.loadLayersModel('indexeddb://teachable-text-model');
+        const meta = JSON.parse(localStorage.getItem('tt_model_meta')||'null');
+        if(meta){ state.vocab = new Map(meta.vocab); state.classes = meta.classes.map(c=>({...c,examples:[]})); renderClasses(); buildVocab(); }
+        state.trained = true; statusEl.textContent='Loaded model'; log('Model loaded');
+      }catch(e){alert('Load failed: '+e.message); console.error(e)}
+    })
+
+
+    addClass('Positive'); addClass('Negative'); addClass('Spam');
+    state.classes[0].examples.push('I loved the new album, it was amazing');
+    state.classes[0].examples.push('This is great, highly recommend');
+    state.classes[1].examples.push('I disliked the food it was bland');
+    state.classes[1].examples.push('Terrible experience and very slow');
+    state.classes[2].examples.push('You won a prize click here');
+    state.classes[2].examples.push('Lowest price pills available now');
+    renderClasses(); buildVocab();
+
+    classesContainer.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button[data-id]'); if(!btn) return; const id=btn.getAttribute('data-id'); const c=state.classes.find(x=>x.id===id);
+      const name = prompt('Rename label', c.label); if(name){ c.label = name.trim(); renderClasses(); const meta = JSON.parse(localStorage.getItem('tt_model_meta')||'null'); }
+    })
+
+    document.addEventListener('keydown',(e)=>{
+      if((e.ctrlKey||e.metaKey) && e.key==='s'){ e.preventDefault(); saveModelBtn.click(); }
+    })
+
+
+    window._studio = {state, buildVocab, buildModel, trainModel, predict}
+
+ 
+    updateProbBars([]);
+
+  </script>
+</body>
+</html>
